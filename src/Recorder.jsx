@@ -5,6 +5,7 @@ import CountdownTimer from "react-component-countdown-timer";
 import { osName } from "react-device-detect";
 
 export const Recorder = ({
+  mode = "user",
   setVideo = () => {},
   onStartRecorder = () => {},
   onStopRecorder = () => {},
@@ -40,6 +41,7 @@ export const Recorder = ({
   const [state, setState] = useState(1);
   const [showButton, setShowButton] = useState(true);
   const [showButtonReset, setShowButtonReset] = useState(false);
+  const [faceUser, setFaceUser] = useState(mode)
 
   useEffect(() => {
     setPreview(document.getElementById("preview"));
@@ -92,6 +94,14 @@ export const Recorder = ({
     return <div className={classes.ios.error}>{message}</div>;
   };
 
+  const videoConstraintsEnv = {
+    facingMode: { exact: "environment" }
+  };
+
+  const videoConstraintsUser = {
+    facingMode: "user"
+  };
+
   return (
     <>
       {osName !== "iOS" ? (
@@ -101,9 +111,9 @@ export const Recorder = ({
             mirrored={true}
             audio={false}
             style={state === 1 ? { display: "block" } : { display: "none" }}
-            mirrored="true"
             screenshotFormat="image/jpeg"
             className={classes.others.webcam || ""}
+            videoConstraints={faceUser ? videoConstraintsUser : videoConstraintsEnv}
           />
           <video
             style={state === 2 ? { display: "block" } : { display: "none" }}
@@ -127,6 +137,12 @@ export const Recorder = ({
                   (showButton
                     ? "ضبط ویدیو"
                     : showButtonReset && "ضبط دوباره فیلم")}
+              </button>
+              <button
+                className={classes.others.button || ""}
+                onClick={() => setFaceUser(!faceUser)}
+              >
+                چرخش دوربین
               </button>
             </>
           )}
